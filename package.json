@@ -1,6 +1,6 @@
 {
-  "name": "todolist",
-  "displayName": "Demo",
+  "name": "todo_list",
+  "displayName": "todo_list",
   "version": "0.0.1",
   "description": "A funny project ❤️ ",
   "author": "Developer27149",
@@ -30,10 +30,9 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://fanyi-api.baidu.com/"
+      "http://www.jimmyxuexue.top:9999/"
     ],
     "permissions": [
-      "clipboard",
       "storage"
     ]
   }
