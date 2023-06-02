@@ -1,25 +1,17 @@
-import { useEffect, useState } from "react"
+import styleText from "data-text:../style.css"
+import type { PlasmoGetStyle } from "plasmo"
+import { useCallback, useContext, useEffect, useReducer, useState } from "react"
 
+import AuthTip from "~components/AuthTip"
 import Loading from "~components/Loading"
 import MainContainer from "~components/MainContainer"
-import type { PlasmoGetStyle } from "plasmo"
-import styleText from "data-text:../style.css"
+import { GlobalContext, contextReducer, defaultValue } from "~utils/store"
 
 export const getStyle: PlasmoGetStyle = () => {
   const style = document.createElement("style")
   style.textContent = styleText
   return style
 }
-
-interface IUserInfo {
-  avatar: string
-  createTime: string
-  id: number
-  phone: number
-  sex?: string
-  username: string
-}
-
 ;(async () => {
   try {
     if (location.host === "www.jimmyxuexue.top:668") {
@@ -27,7 +19,6 @@ interface IUserInfo {
       const rawLoginUser = localStorage.getItem("login-user")
       if (token && rawLoginUser) {
         const loginUserData = JSON.parse(rawLoginUser)
-        console.log(loginUserData)
         // save data into chrome storage
         chrome.storage.sync.set({ token, loginUserData })
       }
@@ -38,25 +29,50 @@ interface IUserInfo {
 })()
 
 const CustomButton = () => {
-  const [isLoading, setIsLoading] = useState(true)
+  const [active, setActive] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [hadAuth, setHadAuth] = useState(false)
-  const [token, setToken] = useState("")
-  const [userInfo, setUserInfo] = useState({} as IUserInfo)
+
+  const [state, dispatch] = useReducer(contextReducer, defaultValue)
 
   useEffect(() => {
     // init and get token
-    chrome.storage.sync.get(["token"], (result) => {
-      console.log("token:", result)
+    chrome.storage.sync.get(["token", "loginUserData"], (result) => {
       if (result.token) {
-        setToken(result.token)
+        setHadAuth(true)
+        dispatch({ type: "userInfo", payload: result.loginUserData })
+        // @ts-ignore
+        globalThis.__todo_list_token = result.token
       }
     })
+    // init add keydown event
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "/" && !active && e.metaKey) {
+        setActive(true)
+      }
+      if (e.key === "Escape" && active) {
+        setActive(false)
+      }
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+    }
   }, [])
 
+  if (!active) return null
+
+  // 需要去主页登录后续才能使用
+  if (!hadAuth) return <AuthTip onClose={() => setActive(false)} />
+
   return (
-    <div className="fixed inset-0 flex justify-center items-center w-screen h-screen">
-      {isLoading ? <Loading /> : <MainContainer />}
-    </div>
+    <GlobalContext.Provider value={{ state, dispatch }}>
+      <div
+        className="fixed inset-0 flex justify-center items-center w-screen h-screen"
+        onClick={() => setActive(false)}>
+        {isLoading ? <Loading /> : <MainContainer />}
+      </div>
+    </GlobalContext.Provider>
   )
 }
 
