@@ -1,11 +1,16 @@
 import styleText from "data-text:../style.css"
+import { useAtom } from "jotai"
+import { uniqBy } from "lodash-es"
 import type { PlasmoGetStyle } from "plasmo"
-import { useCallback, useContext, useEffect, useReducer, useState } from "react"
+import { useEffect, useState } from "react"
 
 import AuthTip from "~components/AuthTip"
 import Loading from "~components/Loading"
 import MainContainer from "~components/MainContainer"
-import { GlobalContext, contextReducer, defaultValue } from "~utils/store"
+import { getInitData } from "~utils/services"
+import { todoListAtom, userInfoAtom } from "~utils/store"
+import { taskTypeListAtom } from "~utils/store"
+import { type ITodoItem } from "~utils/types"
 
 export const getStyle: PlasmoGetStyle = () => {
   const style = document.createElement("style")
@@ -32,22 +37,17 @@ const CustomButton = () => {
   const [active, setActive] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [hadAuth, setHadAuth] = useState(false)
+  const [, setTaskType] = useAtom(taskTypeListAtom)
+  const [, setUserInfo] = useAtom(userInfoAtom)
+  const [, setTodoList] = useAtom(todoListAtom)
 
-  const [state, dispatch] = useReducer(contextReducer, defaultValue)
-
+  const addTodoListAtom = (newTodoList: ITodoItem[]) => {
+    setTodoList((i) => uniqBy([...i, ...newTodoList], "taskId"))
+  }
   useEffect(() => {
-    // init and get token
-    chrome.storage.sync.get(["token", "loginUserData"], (result) => {
-      if (result.token) {
-        setHadAuth(true)
-        dispatch({ type: "userInfo", payload: result.loginUserData })
-        // @ts-ignore
-        globalThis.__todo_list_token = result.token
-      }
-    })
     // init add keydown event
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "/" && !active && e.metaKey) {
+      if (e.key === "j" && !active && e.metaKey && e.ctrlKey) {
         setActive(true)
       }
       if (e.key === "Escape" && active) {
@@ -60,19 +60,45 @@ const CustomButton = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (active === false) return
+    // init and get token
+    chrome.storage.sync.get(["token", "loginUserData"], async (result) => {
+      try {
+        console.log("result:", result)
+        if (result.token) {
+          setHadAuth(true)
+          setUserInfo(result.loginUserData)
+          // fetch todo list data
+          setIsLoading(true)
+          const { taskTypeList, todoList } = await getInitData()
+          setTaskType(taskTypeList)
+          addTodoListAtom(todoList)
+        }
+      } catch (error) {
+        console.log("error", error)
+        setActive(false)
+      } finally {
+        setIsLoading(false)
+      }
+    })
+  }, [active])
+
   if (!active) return null
 
   // 需要去主页登录后续才能使用
   if (!hadAuth) return <AuthTip onClose={() => setActive(false)} />
 
   return (
-    <GlobalContext.Provider value={{ state, dispatch }}>
-      <div
-        className="fixed inset-0 flex justify-center items-center w-screen h-screen"
-        onClick={() => setActive(false)}>
-        {isLoading ? <Loading /> : <MainContainer />}
-      </div>
-    </GlobalContext.Provider>
+    <div
+      className="fixed inset-0 flex justify-center items-center w-screen h-screen"
+      onClick={() => setActive(false)}>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <MainContainer onDisActive={() => setActive(false)} />
+      )}
+    </div>
   )
 }
 

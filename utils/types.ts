@@ -1,3 +1,8 @@
+export interface IPaginationData<T> {
+  page: number
+  total: number
+  result: T[]
+}
 export interface IUserInfo {
   avatar: string
   createTime: string

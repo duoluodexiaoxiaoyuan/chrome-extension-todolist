@@ -6,7 +6,7 @@ export default function AuthTip({ onClose }: { onClose: () => void }) {
     <div
       className="fixed top-24 right-24 max-w-max p-5 rounded-sm bg-white shadow-2xl text-[14px] flex items-center gap-2"
       style={{ zIndex: Number.MAX_SAFE_INTEGER }}>
-      <AiOutlineMessage className="text-red-500" />
+      <AiOutlineMessage className="text-green-500" />
       <a
         href="http://www.jimmyxuexue.top:668/#/todolist"
         target="_blank"
