@@ -57,14 +57,11 @@ export interface TypeMessage {
   updateTime?: any
 }
 
-export type TAction =
-  | { type: "userInfo"; payload: IUserInfo }
-  | { type: "todoList"; payload: Record<string, ITodoItem[]> }
-  | { type: "reset" }
-
-export interface IStore {
-  userInfo: IUserInfo
-  todoList: Record<string, ITodoItem[]>
-  // setUserInfo: (userInfo: IUserInfo) => void
-  // setTodoList: (todoList: Record<string, ITodoItem[]>) => void
+export interface IAddTodoItemParams {
+  typeId: number
+  taskName: string
+  taskContent: string
+}
+export interface IUpdateTodoItemParams extends IAddTodoItemParams {
+  taskId?: number
 }
