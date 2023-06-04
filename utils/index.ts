@@ -38,3 +38,25 @@ export const generateHashPassword = (password: string) => {
   const SALT_ROUNDS = 10
   return bcrypt.hashSync(password, SALT_ROUNDS)
 }
+
+export const formatTimestamp = (timestamp?: number | string) => {
+  try {
+    if (!timestamp) return "-"
+    const _ts = Number(timestamp)
+    const date = new Date(_ts)
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+  } catch (error) {
+    console.error("format date fail:", timestamp, error)
+    return "-"
+  }
+}
+
+export const calcExprTimeByIndex = (index: number) => {
+  const record = {
+    "-1": "",
+    0: "today",
+    1: "3 days",
+    2: "week"
+  }
+  return record[index] as string
+}

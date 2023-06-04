@@ -3,7 +3,8 @@ import {
   createNewTodoItem,
   getAllTaskType,
   getTodoListByTypeId,
-  login
+  login,
+  modifyTodoItem
 } from "~utils/services"
 
 import { ETaskStatus } from "~utils/types"
@@ -36,6 +37,19 @@ const handler: PlasmoMessaging.MessageHandler<{
       typeId: Number(typeId),
       taskName,
       taskContent
+    })
+    console.log("response", response)
+    return res.send(response)
+  }
+
+  if (type === "modify-todo-item") {
+    const { taskId, typeId, taskName, taskContent, status } = req.body
+    const response = await modifyTodoItem({
+      taskId: Number(taskId),
+      typeId: Number(typeId),
+      taskName,
+      taskContent,
+      status: Number(status)
     })
     console.log("response", response)
     return res.send(response)

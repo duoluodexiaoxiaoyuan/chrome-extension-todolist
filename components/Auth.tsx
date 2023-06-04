@@ -3,6 +3,7 @@ import { getInitData, onLogin } from "~utils/services"
 import { taskTypeListAtom, todoListAtom, userInfoAtom } from "~utils/store"
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
+import { HOMEPAGE } from "~utils/config"
 import authSvg from "data-base64:~assets/auth.svg"
 import { onClickStopPropagation } from "~utils"
 import { useAtom } from "jotai"
@@ -14,7 +15,7 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
   const [userInfo, setUserInfo] = useAtom(userInfoAtom)
   const [showRawPassword, setShowRawPassword] = useState(false)
   const [form, setForm] = useState({
-    phone: "13322222222",
+    phone: "",
     password: ""
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -51,8 +52,9 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
       onSubmit={onSubmit}
       onClick={onClickStopPropagation}
       className="flex flex-col w-[60vw] max-w-[922px] h-[400px] pb-12 bg-white rounded-md justify-center custom-shadow relative">
-      <h3 className="pl-10 pt-10">欢迎回来，{userInfo.phone ?? "朋友"}</h3>
-      <div className="w-[240px] z-10 flex flex-col gap-4 p-8 pb-0">
+      <div className="w-[240px] z-10 flex flex-col gap-4 p-8 pb-0 absolute left-0 top-0 bottom-0 bg-white">
+        <h3 className="pl-10 pb-8">欢迎回来，{userInfo.phone ?? "朋友"}</h3>
+
         <div className=" flex gap-2 flex-col">
           <label
             className="w-16 inline-block text-gray-500 text-[14px]"
@@ -104,14 +106,15 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
           </div>
         </button>
         <div
-          className="text-red-500 text-[12px] mt-8 h-4 text-center"
+          className="text-red-500 text-[12px] h-4 text-center"
           style={{ opacity: error.length }}>
           {error}
         </div>
       </div>
       <a
-        href="http://www.jimmyxuexue.top:668/?#/todolist"
-        className="opacity-30 hover:opacity-80 transition-all absolute left-2 bottom-2 text-[12px]">
+        href={HOMEPAGE}
+        target="_blank"
+        className="opacity-30 hover:opacity-80 transition-all absolute left-2 bottom-2 text-[12px] z-20">
         忘记密码 / 注册用户
       </a>
       <img className="absolute top-0 bottom-0 right-0 h-[100%]" src={authSvg} />

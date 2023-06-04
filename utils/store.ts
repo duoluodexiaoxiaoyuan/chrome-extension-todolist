@@ -1,15 +1,13 @@
 import type { ITaskType, ITodoItem, IUserInfo } from "./types"
 import { atom, useAtom } from "jotai"
 
-import { uniqBy } from "lodash-es"
-
 const userInfoAtom = atom({} as IUserInfo)
 const todoListAtom = atom([
   {
     taskId: 1,
     typeId: 2,
     userId: 3,
-    status: 0,
+    status: 1,
     taskName: "Complete project",
     taskContent: "Finish all the remaining tasks and submit the project",
     createTime: "2023-06-03T10:00:00.000Z",
@@ -26,7 +24,7 @@ const todoListAtom = atom([
   },
   {
     taskId: 2,
-    typeId: 1,
+    typeId: 2,
     userId: 4,
     status: 1,
     taskName: "Buy groceries",
@@ -47,7 +45,7 @@ const todoListAtom = atom([
     taskId: 30,
     typeId: 2,
     userId: 3,
-    status: 0,
+    status: 1,
     taskName: "Complete project",
     taskContent: "Finish all the remaining tasks and submit the project",
     createTime: "2023-06-03T10:00:00.000Z",
@@ -85,7 +83,7 @@ const todoListAtom = atom([
     taskId: 4,
     typeId: 1,
     userId: 5,
-    status: 0,
+    status: 1,
     taskName: "Do laundry",
     taskContent: "Wash clothes and hang them to dry",
     createTime: "2023-06-03T16:00:00.000Z",
@@ -159,27 +157,32 @@ const todoListAtom = atom([
   }
 ] as ITodoItem[])
 const taskTypeListAtom = atom([
-  // {
-  //   createTime: "2023-06-03 10:00:00",
-  //   typeId: 1,
-  //   typeName: "紧急",
-  //   userId: 123
-  // },
-  // {
-  //   createTime: "2023-06-03 11:00:00",
-  //   desc: true,
-  //   typeId: 2,
-  //   typeName: "重要",
-  //   updateTime: "2023-06-03 12:30:00",
-  //   userId: 456
-  // },
-  // {
-  //   createTime: "2023-06-03 13:00:00",
-  //   typeId: 3,
-  //   typeName: "稍后再看",
-  //   userId: 789
-  // }
+  {
+    createTime: "2023-06-03 10:00:00",
+    typeId: 1,
+    typeName: "紧急",
+    userId: 123
+  },
+  {
+    createTime: "2023-06-03 11:00:00",
+    desc: true,
+    typeId: 2,
+    typeName: "重要",
+    updateTime: "2023-06-03 12:30:00",
+    userId: 456
+  },
+  {
+    createTime: "2023-06-03 13:00:00",
+    typeId: 3,
+    typeName: "稍后再看",
+    userId: 789
+  }
 ] as ITaskType[])
+
+export const editModelAtom = atom({
+  visible: false,
+  data: undefined as ITodoItem | undefined
+})
 
 const getTodoListByTypeId = (typeId: number) => {
   return atom((get) =>

@@ -1,17 +1,12 @@
-import styleText from "data-text:../style.css"
-import { useAtom } from "jotai"
-import jwtDecode from "jwt-decode"
-import { uniqBy } from "lodash-es"
-import type { PlasmoGetStyle } from "plasmo"
 import { useEffect, useRef, useState } from "react"
 
 import Auth from "~components/Auth"
-import Loading from "~components/Loading"
 import MainContainer from "~components/MainContainer"
-import { getInitData } from "~utils/services"
-import { todoListAtom, userInfoAtom } from "~utils/store"
-import { taskTypeListAtom } from "~utils/store"
-import { type ITodoItem } from "~utils/types"
+import type { PlasmoGetStyle } from "plasmo"
+import jwtDecode from "jwt-decode"
+import styleText from "data-text:../style.css"
+import { useAtom } from "jotai"
+import { userInfoAtom } from "~utils/store"
 
 export const getStyle: PlasmoGetStyle = () => {
   const style = document.createElement("style")
@@ -27,14 +22,9 @@ const CustomButton = () => {
     setRender((i) => !i)
   }
   const [hadAuth, setHadAuth] = useState<undefined | boolean>()
-  const [, setTaskType] = useAtom(taskTypeListAtom)
   const [, setUserInfo] = useAtom(userInfoAtom)
-  const [, setTodoList] = useAtom(todoListAtom)
   const keyPressRef = useRef({})
 
-  const addTodoListAtom = (newTodoList: ITodoItem[]) => {
-    setTodoList((i) => uniqBy([...i, ...newTodoList], "taskId"))
-  }
   useEffect(() => {
     // init add keydown event
     const onKeyDown = (e: KeyboardEvent) => {
@@ -65,6 +55,7 @@ const CustomButton = () => {
     chrome.storage.sync.get(["token", "loginUserData"], async (result) => {
       try {
         const { token, loginUserData } = result
+        console.log(token, loginUserData)
         if (token && loginUserData) {
           const record = jwtDecode(token) as { exp: number }
           console.log(record)
@@ -73,19 +64,19 @@ const CustomButton = () => {
           if (isNotExpired) {
             setHadAuth(true)
             setUserInfo(loginUserData)
-            const { taskTypeList, todoList } = await getInitData()
-            setTaskType(taskTypeList)
-            addTodoListAtom(todoList)
           } else {
             // show login component
             setHadAuth(false)
           }
+        } else {
+          setHadAuth(false)
         }
       } catch (error) {
         console.log("error", error)
         setActive(false)
       }
     })
+    console.log("start app")
   }, [active])
 
   if (active.current === false || hadAuth === undefined) return null

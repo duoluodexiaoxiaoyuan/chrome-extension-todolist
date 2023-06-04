@@ -2,6 +2,7 @@ import type {
   IAddTodoItemParams,
   IGetTodoListPrams,
   ITaskType,
+  IUpdateTodoItemParams,
   IUserInfo
 } from "./types"
 import { generateHashPassword, request } from "./"
@@ -78,4 +79,19 @@ export const onCreateNewTodoItem = async (params: IAddTodoItemParams) => {
     }
   })
   return data as ITodoItem
+}
+
+export const modifyTodoItem = (params: IUpdateTodoItemParams) =>
+  request<ITodoItem>(`${API_URL}/task/update`, {
+    body: JSON.stringify(params)
+  })
+
+export const onModifyTodoItem = async (params: IUpdateTodoItemParams) => {
+  return sendToBackground({
+    name: "request",
+    body: {
+      type: "modify-todo-item",
+      ...params
+    }
+  })
 }

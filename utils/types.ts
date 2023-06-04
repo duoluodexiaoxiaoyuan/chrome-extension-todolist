@@ -23,7 +23,8 @@ export interface ITaskType {
 
 export enum ETaskStatus {
   未完成 = 0,
-  已完成 = 1
+  已完成 = 1,
+  全部 = 2
 }
 
 export interface IGetTodoListPrams {
@@ -45,6 +46,7 @@ export interface ITodoItem {
   createTime: string
   completeTime: string
   updateTime: string
+  expectTime: string
   typeMessage: TypeMessage
 }
 
@@ -64,4 +66,6 @@ export interface IAddTodoItemParams {
 }
 export interface IUpdateTodoItemParams extends IAddTodoItemParams {
   taskId?: number
+  status?: ETaskStatus
+  expectTime?: string
 }

@@ -5,7 +5,18 @@
 .custom-shadow {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
+.scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
 
+.scrollbar::-webkit-scrollbar-track {
+  /* box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: #01010129;
+  /* outline: 1px solid slategrey; */
+}
 .loader {
   width: 32px;
   height: 32px;
@@ -69,4 +80,37 @@
   50% {
     transform: scale(1.2, 1);
   }
+}
+
+@keyframes item-init {
+  from {
+    transform: translateX(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+
+.item-init {
+  opacity: 0;
+  animation: item-init 0.35s ease-in-out forwards;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.8) translateY(16px);
+    opacity: 0.2;
+  }
+  to {
+    transform: scale(1) translateY(0px);
+    opacity: 1;
+  }
+}
+
+.scale-in {
+  transform: scale(0.8);
+  opacity: 0.2;
+  animation: scale-in 0.35s ease-in-out forwards;
 }
