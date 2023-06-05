@@ -28,7 +28,7 @@ export enum ETaskStatus {
 }
 
 export interface IGetTodoListPrams {
-  typeId: number
+  typeId?: number
   page: number
   pageSize: number
   startTime: number
@@ -63,9 +63,9 @@ export interface IAddTodoItemParams {
   taskName: string
   taskContent: string
   expectTime?: string
+  typeId?: number
 }
 export interface IUpdateTodoItemParams extends IAddTodoItemParams {
   taskId?: number
   status?: ETaskStatus
-  typeId?: number
 }

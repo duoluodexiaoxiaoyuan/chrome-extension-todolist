@@ -43,13 +43,15 @@ const handler: PlasmoMessaging.MessageHandler<{
   }
 
   if (type === "modify-todo-item") {
-    const { taskId, typeId, taskName, taskContent, status } = req.body
+    const { taskId, typeId, taskName, taskContent, status, expectTime } =
+      req.body
     const response = await modifyTodoItem({
       taskId: Number(taskId),
       typeId: Number(typeId),
       taskName,
       taskContent,
-      status: Number(status)
+      status: Number(status),
+      expectTime
     })
     console.log("response", response)
     return res.send(response)
@@ -68,6 +70,19 @@ const handler: PlasmoMessaging.MessageHandler<{
         startTime: subDays(Date.now(), 7).getTime(),
         endTime: Date.now()
       })
+      /**
+       *  const [taskTypeList, todoList] = await Promise.all([
+        getAllTaskType(),
+        getTodoListByTypeId({
+          // typeId: taskTypeList[0].typeId,
+          page: 1,
+          pageSize: 30,
+          status: ETaskStatus.未完成,
+          startTime: subDays(Date.now(), 7).getTime(),
+          endTime: Date.now()
+        })
+      ])
+       */
       return {
         taskTypeList,
         todoList: todoList.result

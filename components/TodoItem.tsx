@@ -5,7 +5,7 @@ import { AiOutlineEdit } from "react-icons/ai"
 import { BsCalendar2Check } from "react-icons/bs"
 import { CiCircleCheck } from "react-icons/ci"
 
-import { formatTimestamp } from "~utils"
+import { calcTodoExprTime, formatTimestamp, isExprTimeExpired } from "~utils"
 import { editModelAtom } from "~utils/store"
 import { ETaskStatus, type ITodoItem } from "~utils/types"
 
@@ -34,7 +34,7 @@ export default function TodoItem({ item, styles }: IProps) {
       style={styles}>
       <button
         className={clsx(
-          "text-md hover:scale-105 origin-center transition-all",
+          "text-2xl hover:scale-105 origin-center transition-all",
           { "text-green-600": status === ETaskStatus.已完成 }
         )}>
         <CiCircleCheck />
@@ -53,10 +53,24 @@ export default function TodoItem({ item, styles }: IProps) {
           {taskContent}
         </p>
       </div>
-      <div className="flex gap-2 items-center">
-        <BsCalendar2Check />
-        <span>{formatTimestamp(expectTime)}</span>
-      </div>
+      <div>
+        <div className="flex gap-2 items-center">
+          <BsCalendar2Check />
+          <span
+            className={clsx({
+              "line-through text-gray-400": isExprTimeExpired(expectTime)
+            })}>
+            {formatTimestamp(expectTime)}
+          </span>
+        </div>
+        <span
+          className={clsx(
+            { "text-[#d04b22]": isExprTimeExpired(expectTime) },
+            "text-[12px]"
+          )}>
+          {calcTodoExprTime(expectTime)}
+        </span>
+    </div>
       <div className="flex items-center justify-end gap-2 group-hover:opacity-100 opacity-0 ">
         <AiOutlineEdit
           onClick={() => {

@@ -83,7 +83,7 @@ const CustomButton = () => {
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-center w-screen h-screen"
+      className="fixed inset-0 flex justify-center items-center w-screen h-screen bg-[#33333380]"
       onClick={() => setActive(false)}>
       {hadAuth ? (
         <MainContainer onDisActive={() => setActive(false)} />

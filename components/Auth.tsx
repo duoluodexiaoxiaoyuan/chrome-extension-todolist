@@ -51,8 +51,8 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
     <form
       onSubmit={onSubmit}
       onClick={onClickStopPropagation}
-      className="flex flex-col w-[60vw] max-w-[922px] h-[400px] pb-12 bg-white rounded-md justify-center custom-shadow relative">
-      <div className="w-[240px] z-10 flex flex-col gap-4 p-8 pb-0 absolute left-0 top-0 bottom-0 bg-white">
+      className="flex flex-col w-[60vw] max-w-[900px] h-[400px] pb-12 bg-white rounded-md justify-center custom-shadow relative">
+      <div className="w-[300px] z-10 flex flex-col gap-4 p-8 pb-0 absolute left-0 top-0 bottom-0 bg-white rounded-l-md">
         <h3 className="pl-10 pb-8">欢迎回来，{userInfo.phone ?? "朋友"}</h3>
 
         <div className=" flex gap-2 flex-col">
@@ -62,22 +62,21 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
             手机号
           </label>
           <input
-            className="border border-gray-200 rounded-sm p-2 flex-grow focus-visible:outline-gray-300"
-            type="number"
+            className="border border-gray-200 rounded-sm p-2 flex-grow focus-visible:outline-gray-200"
             name="phone"
             id="phone"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value.trim() })}
           />
         </div>
-        <div className=" flex gap-2 flex-col">
+        <div className="flex gap-2 flex-col">
           <label
             className="w-16 inline-block text-gray-500 text-[14px]"
             htmlFor="password">
             密码
           </label>
           <input
-            className="border border-gray-200 rounded-sm p-2 flex-grow focus-visible:outline-gray-300"
+            className="border border-gray-200 rounded-sm p-2 flex-grow focus-visible:outline-gray-200"
             type={showRawPassword ? "text" : "password"}
             name="password"
             id="password"
@@ -87,7 +86,7 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
             }
           />
           <span
-            className="relative bottom-[32px] left-[150px] cursor-pointer"
+            className="relative bottom-[32px] left-[210px] cursor-pointer opacity-50"
             onClick={() => setShowRawPassword(!showRawPassword)}>
             {showRawPassword ? <BsEye /> : <BsEyeSlash />}
           </span>

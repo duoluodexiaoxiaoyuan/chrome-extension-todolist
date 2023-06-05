@@ -114,3 +114,19 @@
   opacity: 0.2;
   animation: scale-in 0.35s ease-in-out forwards;
 }
+
+@keyframes fade-popup {
+  from {
+    transform: translateY(50px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+
+.bottom-menu {
+  @apply flex items-center absolute bottom-0 left-0 right-0 border-t border-gray-100 p-[10px] bg-white z-10;
+  transform: translateY(50px);
+  animation: fade-popup 0.4s ease-in-out forwards;
+  animation-delay: 1s;
+}

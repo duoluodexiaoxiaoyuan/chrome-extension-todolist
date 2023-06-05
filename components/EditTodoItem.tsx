@@ -1,10 +1,11 @@
-import { calcExprTimeByIndex, onClickStopPropagation } from "~utils"
 import {
-  createNewTodoItem,
-  onCreateNewTodoItem,
-  onModifyTodoItem
-} from "~utils/services"
+  calcExprIndex,
+  calcExprTimeByIndex,
+  exprDateOptions,
+  onClickStopPropagation
+} from "~utils"
 import { editModelAtom, taskTypeListAtom } from "~utils/store"
+import { onCreateNewTodoItem, onModifyTodoItem } from "~utils/services"
 import { useEffect, useState } from "react"
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
@@ -23,7 +24,7 @@ export default function EditTodoItem({ onClose }: IProps) {
   const [editModal] = useAtom(editModelAtom)
   const [taskTypeList, setTaskTypeList] = useAtom(taskTypeListAtom)
   const [, setTodoList] = useAtom(todoListAtom)
-  const [errorMsg, setErrorMsg] = useState<string>("xxxxxxx")
+  const [errorMsg, setErrorMsg] = useState<string>("")
   const [selectTypeId, setSelectTypeId] = useState<number>(
     editModal.data?.typeId ?? taskTypeList?.[0]?.typeId ?? -1
   )
@@ -34,10 +35,13 @@ export default function EditTodoItem({ onClose }: IProps) {
     taskContent: editModal.data?.taskContent ?? ""
   }
   const [form, setForm] = useState(defaultForm)
-  const [isSetExprDate, setIsSetExprDate] = useState<boolean>(false)
-  const [exprDateIndex, setExprDateIndex] = useState<number>(-1)
+  const [isSetExprDate, setIsSetExprDate] = useState<boolean>(
+    !!editModal.data?.expectTime
+  )
 
-  const exprDateOptions = ["今天", "三天内", "本周"]
+  const [exprDateIndex, setExprDateIndex] = useState<number>(
+    calcExprIndex(editModal.data?.expectTime)
+  )
 
   const onPressKeyEnter = async (newType: string) => {
     try {
@@ -54,6 +58,7 @@ export default function EditTodoItem({ onClose }: IProps) {
       })
       console.log("new task:", newTaskTypeList)
       setTaskTypeList(newTaskTypeList)
+      onClose()
     } catch (error) {
       console.log(error)
     } finally {
@@ -72,10 +77,10 @@ export default function EditTodoItem({ onClose }: IProps) {
         setErrorMsg("输入一个简洁的标题吧")
         return
       }
-      if (!form.taskContent) {
-        setErrorMsg("输入事项描述吧，以免后续忘记关键内容")
-        return
-      }
+      // if (!form.taskContent) {
+      //   setErrorMsg("输入事项描述吧，以免后续忘记关键内容")
+      //   return
+      // }
       setIsCreating(true)
       // create a new todo item or update a todo item
       let newTodoItem
@@ -85,10 +90,15 @@ export default function EditTodoItem({ onClose }: IProps) {
           ...form,
           typeId: selectTypeId,
           status: editModal.data.status,
-          expectTime: calcExprTimeByIndex(exprDateIndex)
+          expectTime: calcExprTimeByIndex(exprDateIndex),
+          taskId: editModal.data.taskId
         })
       } else {
-        newTodoItem = await createNewTodoItem(form)
+        newTodoItem = await onCreateNewTodoItem({
+          ...form,
+          typeId: selectTypeId,
+          expectTime: calcExprTimeByIndex(exprDateIndex)
+        })
       }
       console.log("create a new item:", newTodoItem)
       setTodoList((i) => uniqBy([newTodoItem, ...i], "taskId"))
@@ -172,12 +182,16 @@ export default function EditTodoItem({ onClose }: IProps) {
             </div>
           )}
         </div>
-        <button
+        <span
           className={clsx(
-            "relative bottom-[1px] mr-4 my-4 flex items-center gap-2 opacity-40",
-            { "text-[#cb5647] opacity-100": isSetExprDate }
+            "relative bottom-[1px] mr-4 my-4 flex items-center gap-2  cursor-pointer",
+            {
+              "text-[#cb5647] opacity-100": isSetExprDate,
+              "opacity-40": !isSetExprDate
+            }
           )}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
             if (exprDateIndex === -1) {
               setExprDateIndex(0)
             } else {
@@ -187,7 +201,7 @@ export default function EditTodoItem({ onClose }: IProps) {
           }}>
           <BsCalendar2Check />
           <span className="text-[12px] relative top-[1px]">截止日期</span>
-        </button>
+        </span>
         <div className="flex items-center cursor-pointer gap-2 select-none p-2">
           {isSetExprDate &&
             exprDateOptions.map((tag, index) => (
@@ -218,7 +232,7 @@ export default function EditTodoItem({ onClose }: IProps) {
             {isCreating ? (
               <div className="flex items-center gap-2">
                 <AiOutlineLoading3Quarters className="animate-spin" />
-                请稍后
+                <span>保存中...</span>
               </div>
             ) : editModal.data ? (
               "保存"

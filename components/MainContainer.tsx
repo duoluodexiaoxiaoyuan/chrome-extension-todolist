@@ -69,7 +69,7 @@ export default function MainContainer({
 
   return (
     <div
-      className="w-[80vw] max-w-[922px] min-h-[400px] max-h-[80vh] bg-white rounded-md custom-shadow relative overflow-hidden"
+      className="w-[80vw] max-w-[922px] min-h-[400px] max-h-[600px] bg-white rounded-md custom-shadow relative overflow-hidden"
       onClick={onClickStopPropagation}>
       <div className="flex items-center justify-between border-b border-gray-100 p-4 group relative">
         <a href={HOMEPAGE} target="_blank" className="flex gap-2 items-center">
@@ -91,7 +91,7 @@ export default function MainContainer({
       ) : (
         <div
           className="overflow-scroll pb-[60px] scrollbar transition-all ease-linear"
-          style={{ height: "calc(80vh - 107px)" }}>
+          style={{ height: "calc(600px - 107px)" }}>
           {todoList
             .filter(
               (item) => item.status === status || status === ETaskStatus.全部
@@ -106,7 +106,7 @@ export default function MainContainer({
         </div>
       )}
 
-      <div className="flex items-center absolute bottom-0 left-0 right-0 border-t border-gray-100 p-[10px] bg-white z-10">
+      <div className="bottom-menu">
         <div className="mr-auto flex relative p-[2px] border border-[#cb5647] rounded-full text-[13px]">
           <button
             className="p-1 px-2 rounded-sm z-10"
