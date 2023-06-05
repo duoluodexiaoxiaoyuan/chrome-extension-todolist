@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs"
+import { subDays } from "date-fns"
 
 export const request = async <T>(
   url: string,
@@ -54,9 +55,9 @@ export const formatTimestamp = (timestamp?: number | string) => {
 export const calcExprTimeByIndex = (index: number) => {
   const record = {
     "-1": "",
-    0: "today",
-    1: "3 days",
-    2: "week"
+    0: subDays(new Date(), 1).valueOf() / 1000,
+    1: subDays(new Date(), 3).valueOf() / 1000,
+    2: subDays(new Date(), 7).valueOf() / 1000
   }
-  return record[index] as string
+  return `${record[index]}`
 }

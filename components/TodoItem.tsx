@@ -57,17 +57,15 @@ export default function TodoItem({ item, styles }: IProps) {
         <BsCalendar2Check />
         <span>{formatTimestamp(expectTime)}</span>
       </div>
-      <div className="flex items-center gap-2 group-hover:opacity-100 opacity-0 ">
+      <div className="flex items-center justify-end gap-2 group-hover:opacity-100 opacity-0 ">
         <AiOutlineEdit
           onClick={() => {
             setEditModal({ visible: true, data: item })
           }}
           className="cursor-pointer"
         />
-      </div>
-      <span className="absolute top-1 right-1 group-hover:opacity-100 opacity-0">
         <CloseButton onClick={() => {}} />
-      </span>
+      </div>
     </div>
   )
 }

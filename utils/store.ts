@@ -157,26 +157,26 @@ const todoListAtom = atom([
   }
 ] as ITodoItem[])
 const taskTypeListAtom = atom([
-  {
-    createTime: "2023-06-03 10:00:00",
-    typeId: 1,
-    typeName: "紧急",
-    userId: 123
-  },
-  {
-    createTime: "2023-06-03 11:00:00",
-    desc: true,
-    typeId: 2,
-    typeName: "重要",
-    updateTime: "2023-06-03 12:30:00",
-    userId: 456
-  },
-  {
-    createTime: "2023-06-03 13:00:00",
-    typeId: 3,
-    typeName: "稍后再看",
-    userId: 789
-  }
+  // {
+  //   createTime: "2023-06-03 10:00:00",
+  //   typeId: 1,
+  //   typeName: "紧急",
+  //   userId: 123
+  // },
+  // {
+  //   createTime: "2023-06-03 11:00:00",
+  //   desc: true,
+  //   typeId: 2,
+  //   typeName: "重要",
+  //   updateTime: "2023-06-03 12:30:00",
+  //   userId: 456
+  // },
+  // {
+  //   createTime: "2023-06-03 13:00:00",
+  //   typeId: 3,
+  //   typeName: "稍后再看",
+  //   userId: 789
+  // }
 ] as ITaskType[])
 
 export const editModelAtom = atom({

@@ -50,7 +50,7 @@ export default function MainContainer({
         setIsLoading(false)
       }
     }
-    // fetchData()
+    fetchData()
   }, [])
 
   const onSwitchStatus = (isFinish?: boolean) => {

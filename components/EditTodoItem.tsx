@@ -1,12 +1,16 @@
+import { calcExprTimeByIndex, onClickStopPropagation } from "~utils"
+import {
+  createNewTodoItem,
+  onCreateNewTodoItem,
+  onModifyTodoItem
+} from "~utils/services"
 import { editModelAtom, taskTypeListAtom } from "~utils/store"
-import { onCreateNewTodoItem, onModifyTodoItem } from "~utils/services"
 import { useEffect, useState } from "react"
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
 import { BsCalendar2Check } from "react-icons/bs"
 import { IoCloseOutline } from "react-icons/io5"
 import clsx from "clsx"
-import { onClickStopPropagation } from "~utils"
 import { sendToBackground } from "@plasmohq/messaging"
 import { todoListAtom } from "~utils/store"
 import { uniqBy } from "lodash-es"
@@ -21,7 +25,7 @@ export default function EditTodoItem({ onClose }: IProps) {
   const [, setTodoList] = useAtom(todoListAtom)
   const [errorMsg, setErrorMsg] = useState<string>("xxxxxxx")
   const [selectTypeId, setSelectTypeId] = useState<number>(
-    editModal.data.typeId ?? taskTypeList?.[0]?.typeId ?? -1
+    editModal.data?.typeId ?? taskTypeList?.[0]?.typeId ?? -1
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isCreating, setIsCreating] = useState<boolean>(false)
@@ -74,18 +78,20 @@ export default function EditTodoItem({ onClose }: IProps) {
       }
       setIsCreating(true)
       // create a new todo item or update a todo item
+      let newTodoItem
       if (editModal.data) {
         // update a todo item
-      } else {
-        const newTodoItem = await onModifyTodoItem({
+        newTodoItem = await onModifyTodoItem({
           ...form,
           typeId: selectTypeId,
           status: editModal.data.status,
-          expectTime: ''
+          expectTime: calcExprTimeByIndex(exprDateIndex)
         })
-        console.log("create a new item:", newTodoItem)
-        setTodoList((i) => uniqBy([newTodoItem, ...i], "taskId"))
+      } else {
+        newTodoItem = await createNewTodoItem(form)
       }
+      console.log("create a new item:", newTodoItem)
+      setTodoList((i) => uniqBy([newTodoItem, ...i], "taskId"))
     } catch (error) {
       console.error("create todo item error:", error)
     } finally {

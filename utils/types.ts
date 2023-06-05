@@ -60,12 +60,12 @@ export interface TypeMessage {
 }
 
 export interface IAddTodoItemParams {
-  typeId: number
   taskName: string
   taskContent: string
+  expectTime?: string
 }
 export interface IUpdateTodoItemParams extends IAddTodoItemParams {
   taskId?: number
   status?: ETaskStatus
-  expectTime?: string
+  typeId?: number
 }
