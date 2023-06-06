@@ -16,7 +16,7 @@ export const getStyle: PlasmoGetStyle = () => {
 
 const CustomButton = () => {
   const [, setRender] = useState(false)
-  const active = useRef(true)
+  const active = useRef(false)
   const setActive = (value: boolean) => {
     active.current = value
     setRender((i) => !i)
