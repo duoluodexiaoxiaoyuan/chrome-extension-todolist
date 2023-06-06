@@ -1,8 +1,22 @@
-# todolist
+# todo list
 
-这是一个 [Plasmo 扩展插件](https://docs.plasmo.com/) 项目,使用 [`plasmo init`](https://www.npmjs.com/package/plasmo) 脚手架生成。
+> 这是一个 [Plasmo 扩展插件](https://docs.plasmo.com/) 项目,使用 [`plasmo init`](https://www.npmjs.com/package/plasmo) 脚手架生成。
 
-A funny project ❤️ 
+本项目是为了`Jimmy`的新项目创建的 Chrome 浏览器插件：
+
+[Jimmylxue/snow-todolist: ✨ 新项目 - todolist 基于monorepo架构下 react + nest.js 全栈项目，麻雀虽小五脏俱全。在线访问：https://tdl.jimmyxuexue.top](https://github.com/Jimmylxue/snow-todolist)
+
+## 预览
+
+使用组合键`command`+`.`即可在任何页面唤起此插件。
+
+### 登录
+
+![image-20230607002207370](./login.png)
+
+### 应用
+
+![image-20230607002020676](./view.png)
 
 ## 开始
 
