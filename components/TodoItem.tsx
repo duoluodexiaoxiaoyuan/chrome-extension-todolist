@@ -19,36 +19,44 @@ interface IProps {
 export default function TodoItem({ item, styles }: IProps) {
   const { taskName, taskContent, taskId, status, expectTime } = item
   const [isLoading, setIsLoading] = useState(false)
-  const [editModal, setEditModal] = useAtom(editModelAtom)
-  const [_, setTodoList] = useAtom(todoListAtom)
+  const [, setEditModal] = useAtom(editModelAtom)
+  const [, setTodoList] = useAtom(todoListAtom)
   const onChangeStatus = async () => {
     console.log("click change status")
+    let newTodoItem
     try {
       setIsLoading(true)
-    } catch (error) {
-      console.error("change status fail:", error)
-      const newTodoItem = await onModifyTodoItem({
+      newTodoItem = await onModifyTodoItem({
         ...item,
         status:
           item.status === ETaskStatus.已完成
             ? ETaskStatus.未完成
             : ETaskStatus.已完成
       })
-      setTodoList((prev) => {
-        return prev.map((item) => {
-          if (item.taskId === taskId) {
-            return newTodoItem
-          }
-          return item
-        })
-      })
+    } catch (error) {
+      console.error("change status fail:", error)
     } finally {
-      setIsLoading(false)
+      setTimeout(() => {
+        setIsLoading(false)
+        if (newTodoItem) {
+          setTodoList((prev) => {
+            return prev.map((item) => {
+              if (item.taskId === taskId) {
+                return newTodoItem
+              }
+              return item
+            })
+          })
+        }
+      }, 1000)
     }
   }
   return (
     <div
-      className="p-4 pr-2 m-4 mx-8 border border-gray-100 rounded-md grid group grid-cols-todo border-l-[4px] hover:border-l-[#cb5647] hover:custom-shadow item-init"
+      className={clsx(
+        { "reverse-status": isLoading, "item-init": !isLoading },
+        "todo-item group hover:border-l-[#cb5647] hover:custom-shadow"
+      )}
       style={styles}>
       <button
         onClick={onChangeStatus}

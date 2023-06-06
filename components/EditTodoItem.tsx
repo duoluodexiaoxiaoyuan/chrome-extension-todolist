@@ -1,21 +1,22 @@
+import clsx from "clsx"
+import { useAtom } from "jotai"
+import { uniqBy } from "lodash-es"
+import { useEffect, useState } from "react"
+import { AiOutlineLoading3Quarters } from "react-icons/ai"
+import { BsCalendar2Check } from "react-icons/bs"
+import { IoCloseOutline } from "react-icons/io5"
+
+import { sendToBackground } from "@plasmohq/messaging"
+
 import {
   calcExprIndex,
   calcExprTimeByIndex,
   exprDateOptions,
   onClickStopPropagation
 } from "~utils"
-import { editModelAtom, taskTypeListAtom } from "~utils/store"
 import { onCreateNewTodoItem, onModifyTodoItem } from "~utils/services"
-import { useEffect, useState } from "react"
-
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import { BsCalendar2Check } from "react-icons/bs"
-import { IoCloseOutline } from "react-icons/io5"
-import clsx from "clsx"
-import { sendToBackground } from "@plasmohq/messaging"
+import { editModelAtom, taskTypeListAtom } from "~utils/store"
 import { todoListAtom } from "~utils/store"
-import { uniqBy } from "lodash-es"
-import { useAtom } from "jotai"
 
 interface IProps {
   onClose: () => void
@@ -43,20 +44,19 @@ export default function EditTodoItem({ onClose }: IProps) {
     calcExprIndex(editModal.data?.expectTime)
   )
 
+  /**
+   * create new type
+   * @param newType string
+   * @returns
+   */
   const onPressKeyEnter = async (newType: string) => {
     try {
       if (newType.length === 0 && isLoading) return
       setIsLoading(true)
-      const body = {
-        type: "new-task-type",
-        newTaskTypeName: newType
-      }
-      console.log("body:", body)
       const { data: newTaskTypeList } = await sendToBackground({
-        name: "request",
-        body
+        name: "createTaskType",
+        body: newType
       })
-      console.log("new task:", newTaskTypeList)
       setTaskTypeList(newTaskTypeList)
       onClose()
     } catch (error) {

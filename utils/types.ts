@@ -33,7 +33,7 @@ export interface IGetTodoListPrams {
   pageSize: number
   startTime: number
   endTime: number
-  status: ETaskStatus
+  status?: ETaskStatus
 }
 
 export interface ITodoItem {

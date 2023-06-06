@@ -1,13 +1,13 @@
-import { BsEye, BsEyeSlash } from "react-icons/bs"
-import { getInitData, onLogin } from "~utils/services"
-import { taskTypeListAtom, todoListAtom, userInfoAtom } from "~utils/store"
-
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import { HOMEPAGE } from "~utils/config"
 import authSvg from "data-base64:~assets/auth.svg"
-import { onClickStopPropagation } from "~utils"
 import { useAtom } from "jotai"
 import { useState } from "react"
+import { AiOutlineLoading3Quarters } from "react-icons/ai"
+import { BsEye, BsEyeSlash } from "react-icons/bs"
+
+import { onClickStopPropagation } from "~utils"
+import { HOMEPAGE } from "~utils/config"
+import { getInitData, onLogin } from "~utils/services"
+import { taskTypeListAtom, todoListAtom, userInfoAtom } from "~utils/store"
 
 export default function Auth({ setAuth }: { setAuth: () => void }) {
   const [, setTaskType] = useAtom(taskTypeListAtom)
@@ -62,6 +62,7 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
             手机号
           </label>
           <input
+            autoComplete="off"
             className="border border-gray-200 rounded-sm p-2 flex-grow focus-visible:outline-gray-200"
             name="phone"
             id="phone"

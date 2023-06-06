@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+#_extension_container_ {
+  font-family: "NotoSansSC-Regular", sans-serif;
+}
 .custom-shadow {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
@@ -129,4 +132,25 @@
   transform: translateY(50px);
   animation: fade-popup 0.4s ease-in-out forwards;
   animation-delay: 1s;
+}
+
+@keyframes reverse-status {
+  0% {
+    transform: translateX(0px) rotate(3deg);
+  }
+  40% {
+    transform: translateX(-15px) rotate(-3deg);
+  }
+  80% {
+    transform: translateX(0px) rotate(3deg);
+  }
+  100% {
+    transform: translateX(900px) rotate(0deg);
+  }
+}
+.todo-item {
+  @apply p-4 pr-2 m-4 mx-8 border border-gray-100 rounded-md grid  grid-cols-todo border-l-[4px];
+}
+.reverse-status {
+  animation: reverse-status 0.7s ease-in-out forwards !important;
 }

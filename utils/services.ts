@@ -1,3 +1,6 @@
+import { sendToBackground } from "@plasmohq/messaging"
+
+import { generateHashPassword, request } from "./"
 import type {
   IAddTodoItemParams,
   IGetTodoListPrams,
@@ -5,18 +8,15 @@ import type {
   IUpdateTodoItemParams,
   IUserInfo
 } from "./types"
-import { generateHashPassword, request } from "./"
-
 import type { IPaginationData } from "./types"
 import type { ITodoItem } from "./types"
-import { sendToBackground } from "@plasmohq/messaging"
 
 const API_URL = "https://api.jimmyxuexue.top"
 
 export const getAllTaskType = () =>
   request<ITaskType[]>(`${API_URL}/taskType/list`)
 
-export const getTodoListByTypeId = (params: IGetTodoListPrams) =>
+export const getTodoList = (params: IGetTodoListPrams) =>
   request<IPaginationData<ITodoItem>>(`${API_URL}/task/list/`, {
     body: JSON.stringify(params)
   })
@@ -36,7 +36,7 @@ export const getInitData = async () => {
       type: "init"
     }
   })
-  return data.data as {
+  return data as {
     taskTypeList: ITaskType[]
     todoList: ITodoItem[]
   }
@@ -52,9 +52,8 @@ export const login = (phone: string, password: string) =>
 
 export const onLogin = async (phone: string, password: string) => {
   const data = await sendToBackground({
-    name: "request",
+    name: "login",
     body: {
-      type: "login",
       phone,
       password: generateHashPassword(password)
     }
@@ -70,13 +69,10 @@ export const createNewTodoItem = (params: IAddTodoItemParams) =>
     body: JSON.stringify(params)
   })
 
-export const onCreateNewTodoItem = async (params: IAddTodoItemParams) => {
+export const onCreateNewTodoItem = async (body: IAddTodoItemParams) => {
   const data = await sendToBackground({
-    name: "request",
-    body: {
-      type: "create-new-todo-item",
-      ...params
-    }
+    name: "createTodoItem",
+    body
   })
   return data as ITodoItem
 }
@@ -86,12 +82,9 @@ export const modifyTodoItem = (params: IUpdateTodoItemParams) =>
     body: JSON.stringify(params)
   })
 
-export const onModifyTodoItem = async (params: IUpdateTodoItemParams) => {
+export const onModifyTodoItem = async (body: IUpdateTodoItemParams) => {
   return sendToBackground({
-    name: "request",
-    body: {
-      type: "modify-todo-item",
-      ...params
-    }
-  })
+    name: "modifyTodoItem",
+    body
+  }) as Promise<ITodoItem>
 }

@@ -1,5 +1,7 @@
-import { addDays } from "date-fns"
 import bcrypt from "bcryptjs"
+import { addDays, isBefore } from "date-fns"
+
+import type { ITodoItem } from "./types"
 
 export const request = async <T>(
   url: string,
@@ -93,4 +95,30 @@ export const calcExprTimeByIndex = (index: number) => {
     2: addDays(new Date(), 7).valueOf()
   }
   return `${record[index]}`
+}
+
+// 七天内任务数量
+export const calcTodoCountInWeek = (todoList: ITodoItem[]) => {
+  const result = [0, 0, 0, 0, 0, 0, 0]
+  const exprResult = [0, 0, 0, 0, 0, 0, 0]
+  todoList.forEach((todo) => {
+    const { expectTime, createTime } = todo
+    const _expr = Number(expectTime)
+    const _createTime = Number(createTime)
+    const now = new Date()
+
+    for (let index = 0; index < result.length; index++) {
+      if (!isBefore(addDays(now, -(index + 3)), new Date(_createTime))) {
+        result[index + 2] += 1
+        if (_expr && !isBefore(addDays(now, -(index + 3)), new Date(_expr))) {
+          exprResult[index + 2] += 1
+        }
+        return
+      }
+    }
+  })
+  return {
+    result,
+    exprResult
+  }
 }

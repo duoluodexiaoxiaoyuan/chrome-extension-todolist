@@ -1,11 +1,11 @@
+import styleText from "data-text:../style.css"
+import { useAtom } from "jotai"
+import jwtDecode from "jwt-decode"
+import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useEffect, useRef, useState } from "react"
 
 import Auth from "~components/Auth"
 import MainContainer from "~components/MainContainer"
-import type { PlasmoGetStyle } from "plasmo"
-import jwtDecode from "jwt-decode"
-import styleText from "data-text:../style.css"
-import { useAtom } from "jotai"
 import { userInfoAtom } from "~utils/store"
 
 export const getStyle: PlasmoGetStyle = () => {
@@ -76,13 +76,16 @@ const CustomButton = () => {
         setActive(false)
       }
     })
-    console.log("start app")
-  }, [active])
+    // 每次启用，都禁止页面body滚动
+    document.body.style.overflow = active.current === true ? "hidden" : "unset"
+    console.log("status change...", active.current)
+  }, [active.current])
 
   if (active.current === false || hadAuth === undefined) return null
 
   return (
     <div
+      id="_extension_container_"
       className="fixed inset-0 flex justify-center items-center w-screen h-screen bg-[#33333380]"
       onClick={() => setActive(false)}>
       {hadAuth ? (
@@ -95,3 +98,7 @@ const CustomButton = () => {
 }
 
 export default CustomButton
+
+export const config: PlasmoCSConfig = {
+  css: ["font.css"]
+}
