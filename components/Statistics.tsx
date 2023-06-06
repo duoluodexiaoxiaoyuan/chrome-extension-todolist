@@ -62,7 +62,7 @@ export default function Statistics() {
         <div className="flex flex-col justify-center items-center my-4">
           <img src={userInfo.avatar} className="rounded-full w-16 h-16 mb-2" />
           <div className="text-center text-[18px] font-bold">
-            {userInfo.username}-{todoList.length}
+            {userInfo.username}
           </div>
         </div>
         <div className="flex gap-4">
