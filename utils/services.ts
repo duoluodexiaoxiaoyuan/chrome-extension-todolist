@@ -1,6 +1,3 @@
-import { sendToBackground } from "@plasmohq/messaging"
-
-import { generateHashPassword, request } from "./"
 import type {
   IAddTodoItemParams,
   IGetTodoListPrams,
@@ -8,8 +5,11 @@ import type {
   IUpdateTodoItemParams,
   IUserInfo
 } from "./types"
+import { generateHashPassword, request } from "./"
+
 import type { IPaginationData } from "./types"
 import type { ITodoItem } from "./types"
+import { sendToBackground } from "@plasmohq/messaging"
 
 const API_URL = "https://api.jimmyxuexue.top"
 
@@ -87,4 +87,18 @@ export const onModifyTodoItem = async (body: IUpdateTodoItemParams) => {
     name: "modifyTodoItem",
     body
   }) as Promise<ITodoItem>
+}
+
+export const removeTodoItem = (taskId: number) =>
+  request(`${API_URL}/task/del`, {
+    body: JSON.stringify({ taskId })
+  })
+
+export const onRemoveTodoItem = async (taskId: number) => {
+  return sendToBackground({
+    name: "removeTodoItem",
+    body: {
+      taskId
+    }
+  })
 }

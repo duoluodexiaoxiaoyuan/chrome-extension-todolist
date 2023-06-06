@@ -1,11 +1,11 @@
-import styleText from "data-text:../style.css"
-import { useAtom } from "jotai"
-import jwtDecode from "jwt-decode"
 import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useEffect, useRef, useState } from "react"
 
 import Auth from "~components/Auth"
 import MainContainer from "~components/MainContainer"
+import jwtDecode from "jwt-decode"
+import styleText from "data-text:../style.css"
+import { useAtom } from "jotai"
 import { userInfoAtom } from "~utils/store"
 
 export const getStyle: PlasmoGetStyle = () => {
@@ -55,10 +55,8 @@ const CustomButton = () => {
     chrome.storage.sync.get(["token", "loginUserData"], async (result) => {
       try {
         const { token, loginUserData } = result
-        console.log(token, loginUserData)
         if (token && loginUserData) {
           const record = jwtDecode(token) as { exp: number }
-          console.log(record)
           // check if token is expired
           const isNotExpired = record.exp * 1000 > Date.now()
           if (isNotExpired) {
@@ -78,7 +76,6 @@ const CustomButton = () => {
     })
     // 每次启用，都禁止页面body滚动
     document.body.style.overflow = active.current === true ? "hidden" : "unset"
-    console.log("status change...", active.current)
   }, [active.current])
 
   if (active.current === false || hadAuth === undefined) return null

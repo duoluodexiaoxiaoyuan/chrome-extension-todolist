@@ -6,7 +6,7 @@ import { BsCalendar2Check } from "react-icons/bs"
 import { CiCircleCheck } from "react-icons/ci"
 
 import { calcTodoExprTime, formatTimestamp, isExprTimeExpired } from "~utils"
-import { onModifyTodoItem } from "~utils/services"
+import { onModifyTodoItem, onRemoveTodoItem } from "~utils/services"
 import { editModelAtom, todoListAtom } from "~utils/store"
 import { ETaskStatus, type ITodoItem } from "~utils/types"
 
@@ -22,7 +22,6 @@ export default function TodoItem({ item, styles }: IProps) {
   const [, setEditModal] = useAtom(editModelAtom)
   const [, setTodoList] = useAtom(todoListAtom)
   const onChangeStatus = async () => {
-    console.log("click change status")
     let newTodoItem
     try {
       setIsLoading(true)
@@ -51,6 +50,23 @@ export default function TodoItem({ item, styles }: IProps) {
       }, 1000)
     }
   }
+
+  const onClickRemoveBtn = async () => {
+    try {
+      setIsLoading(true)
+      await onRemoveTodoItem(taskId)
+    } catch (error) {
+      console.error("remove todo item fail:", error)
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false)
+        setTodoList((prev) => {
+          return prev.filter((item) => item.taskId !== taskId)
+        })
+      }, 500)
+    }
+  }
+
   return (
     <div
       className={clsx(
@@ -105,7 +121,7 @@ export default function TodoItem({ item, styles }: IProps) {
           }}
           className="cursor-pointer"
         />
-        <CloseButton onClick={() => {}} />
+        <CloseButton onClick={onClickRemoveBtn} />
       </div>
     </div>
   )

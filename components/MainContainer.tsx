@@ -1,25 +1,24 @@
-import { useAtom } from "jotai"
-import { useEffect, useState } from "react"
 import { AiFillGithub, AiOutlineHome } from "react-icons/ai"
-import { BsPlusSquareDotted } from "react-icons/bs"
-import { IoCloseOutline } from "react-icons/io5"
-
-import { onClickStopPropagation } from "~utils"
-import { GITHUB } from "~utils/config"
-import { HOMEPAGE } from "~utils/config"
-import { getInitData } from "~utils/services"
 import {
   editModelAtom,
   taskTypeListAtom,
   todoListAtom,
   userInfoAtom
 } from "~utils/store"
-import { ETaskStatus } from "~utils/types"
+import { useEffect, useState } from "react"
 
+import { BsPlusSquareDotted } from "react-icons/bs"
+import { ETaskStatus } from "~utils/types"
 import EditTodoItem from "./EditTodoItem"
+import { GITHUB } from "~utils/config"
+import { HOMEPAGE } from "~utils/config"
+import { IoCloseOutline } from "react-icons/io5"
 import Loading from "./Loading"
 import Statistics from "./Statistics"
 import TodoItem from "./TodoItem"
+import { getInitData } from "~utils/services"
+import { onClickStopPropagation } from "~utils"
+import { useAtom } from "jotai"
 
 export default function MainContainer({
   onDisActive
@@ -27,7 +26,6 @@ export default function MainContainer({
   onDisActive: () => void
 }) {
   const [isLoading, setIsLoading] = useState(false)
-  const [userInfo] = useAtom(userInfoAtom)
   const [todoList, setTodoList] = useAtom(todoListAtom)
   const [, setTaskType] = useAtom(taskTypeListAtom)
   const [offset, setOffset] = useState(2)
@@ -35,15 +33,10 @@ export default function MainContainer({
   const [editModal, setEditModal] = useAtom(editModelAtom)
 
   useEffect(() => {
-    console.log("userInfo:", userInfo)
-  }, [userInfo])
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true)
         const { taskTypeList, todoList } = await getInitData()
-        console.log("todo list:", todoList)
         setTaskType(taskTypeList)
         setTodoList(todoList)
       } catch (error) {
@@ -71,7 +64,7 @@ export default function MainContainer({
 
   return (
     <div
-      className="w-[80vw] max-w-[922px] min-h-[400px] max-h-[800px] bg-white rounded-md custom-shadow relative overflow-hidden"
+      className="w-[80vw] max-w-[922px] min-h-[400px] max-h-[min(860px, 90vh)] bg-white rounded-md custom-shadow relative overflow-hidden"
       onClick={onClickStopPropagation}>
       <div className="flex items-center justify-between border-b border-gray-100 p-4 group relative">
         <a href={HOMEPAGE} target="_blank" className="flex gap-2 items-center">
@@ -93,7 +86,7 @@ export default function MainContainer({
       ) : (
         <div
           className="overflow-scroll pb-[60px] scrollbar transition-all ease-linear"
-          style={{ height: "calc(800px - 107px)" }}>
+          style={{ height: "calc(min(860px, 90vh) - 107px)" }}>
           <Statistics />
           {todoList
             .filter(

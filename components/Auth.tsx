@@ -1,13 +1,13 @@
-import authSvg from "data-base64:~assets/auth.svg"
-import { useAtom } from "jotai"
-import { useState } from "react"
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
 import { BsEye, BsEyeSlash } from "react-icons/bs"
-
-import { onClickStopPropagation } from "~utils"
-import { HOMEPAGE } from "~utils/config"
 import { getInitData, onLogin } from "~utils/services"
 import { taskTypeListAtom, todoListAtom, userInfoAtom } from "~utils/store"
+
+import { AiOutlineLoading3Quarters } from "react-icons/ai"
+import { HOMEPAGE } from "~utils/config"
+import authSvg from "data-base64:~assets/auth.svg"
+import { onClickStopPropagation } from "~utils"
+import { useAtom } from "jotai"
+import { useState } from "react"
 
 export default function Auth({ setAuth }: { setAuth: () => void }) {
   const [, setTaskType] = useAtom(taskTypeListAtom)
@@ -25,7 +25,6 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
       e.preventDefault()
       if (isLoading) return
       setIsLoading(true)
-      console.log("form:", form)
       if (form.password.length < 6 || form.phone.length <= 0) {
         setError("手机号或密码不正确")
         return

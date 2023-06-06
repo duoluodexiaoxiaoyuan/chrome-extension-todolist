@@ -1,22 +1,21 @@
-import clsx from "clsx"
-import { useAtom } from "jotai"
-import { uniqBy } from "lodash-es"
-import { useEffect, useState } from "react"
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import { BsCalendar2Check } from "react-icons/bs"
-import { IoCloseOutline } from "react-icons/io5"
-
-import { sendToBackground } from "@plasmohq/messaging"
-
 import {
   calcExprIndex,
   calcExprTimeByIndex,
   exprDateOptions,
   onClickStopPropagation
 } from "~utils"
-import { onCreateNewTodoItem, onModifyTodoItem } from "~utils/services"
 import { editModelAtom, taskTypeListAtom } from "~utils/store"
+import { onCreateNewTodoItem, onModifyTodoItem } from "~utils/services"
+import { useEffect, useState } from "react"
+
+import { AiOutlineLoading3Quarters } from "react-icons/ai"
+import { BsCalendar2Check } from "react-icons/bs"
+import { IoCloseOutline } from "react-icons/io5"
+import clsx from "clsx"
+import { sendToBackground } from "@plasmohq/messaging"
 import { todoListAtom } from "~utils/store"
+import { uniqBy } from "lodash-es"
+import { useAtom } from "jotai"
 
 interface IProps {
   onClose: () => void
@@ -100,7 +99,6 @@ export default function EditTodoItem({ onClose }: IProps) {
           expectTime: calcExprTimeByIndex(exprDateIndex)
         })
       }
-      console.log("create a new item:", newTodoItem)
       setTodoList((i) => uniqBy([newTodoItem, ...i], "taskId"))
     } catch (error) {
       console.error("create todo item error:", error)
@@ -114,7 +112,6 @@ export default function EditTodoItem({ onClose }: IProps) {
     if (taskTypeList?.length > 0 && selectTypeId === -1) {
       setSelectTypeId(taskTypeList[0].typeId)
     }
-    console.log("all type list:", taskTypeList)
   }, [taskTypeList])
 
   return (
