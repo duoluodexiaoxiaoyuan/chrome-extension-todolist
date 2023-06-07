@@ -1,15 +1,15 @@
-import { BsArrowUp, BsJournalCheck, BsListTask } from "react-icons/bs"
-import { isAfter, isBefore, subDays } from "date-fns"
-import { taskTypeListAtom, todoListAtom, userInfoAtom } from "~utils/store"
-
-import { ETaskStatus } from "~utils/types"
-import { Pie } from "chart.xkcd-react"
-import { calcTodoCountInWeek } from "~utils"
 import chartXkcd from "chart.xkcd"
+import { Pie } from "chart.xkcd-react"
 import clsx from "clsx"
+import { isAfter, isBefore, subDays } from "date-fns"
 // import statisticSvg from "data-base64:~assets/statistic.svg"
 import { useAtom } from "jotai"
 import { useMemo } from "react"
+import { BsArrowUp, BsJournalCheck, BsListTask } from "react-icons/bs"
+
+import { calcTodoCountInWeek } from "~utils"
+import { taskTypeListAtom, todoListAtom, userInfoAtom } from "~utils/store"
+import { ETaskStatus } from "~utils/types"
 
 export default function Statistics() {
   const [userInfo] = useAtom(userInfoAtom)
@@ -18,7 +18,7 @@ export default function Statistics() {
 
   const trendData = useMemo(() => {
     const todayTasks = todoList.filter(
-      (item) => item.createTime === new Date().toLocaleDateString()
+      (item) => Number(item.createTime) > subDays(new Date(), 1).getTime()
     )
     // const yesterdayTasks = todoList.filter((item) => {
     //   // is yesterday's task

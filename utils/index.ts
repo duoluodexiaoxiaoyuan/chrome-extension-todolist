@@ -192,7 +192,6 @@ export const getTagColorFunction = () => {
   ]
   const colorMap = {}
   return (tagName: string | number = "-") => {
-    console.log("tagName", tagName, colorMap)
     if (colorMap[tagName]) {
       return colorList[tagName] as string
     } else {
