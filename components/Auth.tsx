@@ -81,9 +81,10 @@ export default function Auth({ setAuth }: { setAuth: () => void }) {
             name="password"
             id="password"
             value={form.password}
-            onChange={(e) =>
+            onChange={(e) => {
+              e.stopPropagation()
               setForm({ ...form, password: e.target.value.trim() })
-            }
+            }}
           />
           <span
             className="relative bottom-[32px] left-[210px] cursor-pointer opacity-50"

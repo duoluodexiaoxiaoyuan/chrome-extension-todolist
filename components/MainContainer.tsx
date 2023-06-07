@@ -1,33 +1,32 @@
-import clsx from "clsx"
-import { useAtom } from "jotai"
-import { useCallback, useEffect, useState } from "react"
 import { AiFillGithub, AiOutlineHome } from "react-icons/ai"
-import { BsPlusSquareDotted } from "react-icons/bs"
 import { IoCloseOutline, IoRefreshOutline } from "react-icons/io5"
-
+import { editModelAtom, taskTypeListAtom, todoListAtom } from "~utils/store"
 import {
   getTagColorFunction,
   onClickStopPropagation,
   readCacheOrRefetch,
   writeCache
 } from "~utils"
+import { useCallback, useEffect, useState } from "react"
+
+import { BsPlusSquareDotted } from "react-icons/bs"
+import { ETaskStatus } from "~utils/types"
+import EditTodoItem from "./EditTodoItem"
 import { GITHUB } from "~utils/config"
 import { HOMEPAGE } from "~utils/config"
-import { getInitData } from "~utils/services"
-import { editModelAtom, taskTypeListAtom, todoListAtom } from "~utils/store"
-import { ETaskStatus } from "~utils/types"
-
-import EditTodoItem from "./EditTodoItem"
 import Loading from "./Loading"
 import Statistics from "./Statistics"
 import TodoItem from "./TodoItem"
+import clsx from "clsx"
+import { getInitData } from "~utils/services"
+import { useAtom } from "jotai"
 
 export default function MainContainer({
   onDisActive
 }: {
   onDisActive: () => void
 }) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [todoList, setTodoList] = useAtom(todoListAtom)
   const [, setTaskType] = useAtom(taskTypeListAtom)
   const [offset, setOffset] = useState(2)

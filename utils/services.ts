@@ -1,6 +1,3 @@
-import { sendToBackground } from "@plasmohq/messaging"
-
-import { generateHashPassword, request } from "./"
 import type {
   IAddTodoItemParams,
   IGetTodoListPrams,
@@ -8,8 +5,11 @@ import type {
   IUpdateTodoItemParams,
   IUserInfo
 } from "./types"
+import { generateHashPassword, request } from "./"
+
 import type { IPaginationData } from "./types"
 import type { ITodoItem } from "./types"
+import { sendToBackground } from "@plasmohq/messaging"
 
 const API_URL = "https://api.jimmyxuexue.top"
 
@@ -51,14 +51,17 @@ export const login = (phone: string, password: string) =>
   })
 
 export const onLogin = async (phone: string, password: string) => {
-  const data = await sendToBackground({
+  const { token, user } = await sendToBackground({
     name: "login",
     body: {
       phone,
       password: generateHashPassword(password)
     }
   })
-  return data as {
+  return {
+    token,
+    user
+  } as {
     token: string
     user: IUserInfo
   }
