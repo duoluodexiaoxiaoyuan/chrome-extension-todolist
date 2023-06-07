@@ -1,11 +1,12 @@
+import styleText from "data-text:../style.css"
+import hotkeys from "hotkeys-js"
+import { useAtom } from "jotai"
+import jwtDecode from "jwt-decode"
 import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useEffect, useRef, useState } from "react"
 
 import Auth from "~components/Auth"
 import MainContainer from "~components/MainContainer"
-import jwtDecode from "jwt-decode"
-import styleText from "data-text:../style.css"
-import { useAtom } from "jotai"
 import { userInfoAtom } from "~utils/store"
 
 export const getStyle: PlasmoGetStyle = () => {
@@ -18,6 +19,7 @@ const CustomButton = () => {
   const [, setRender] = useState(false)
   const active = useRef(false)
   const setActive = (value: boolean) => {
+    if (value === active.current) return
     active.current = value
     setRender((i) => !i)
   }
@@ -44,6 +46,11 @@ const CustomButton = () => {
         keyPressRef.current = {}
       }, 300)
     }
+    hotkeys("ctrl+j", function (event, handler) {
+      // Prevent the default refresh event under WINDOWS system
+      event.preventDefault()
+      setActive(true)
+    })
     document.addEventListener("keydown", onKeyDown)
     return () => {
       document.removeEventListener("keydown", onKeyDown)
