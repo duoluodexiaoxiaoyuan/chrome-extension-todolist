@@ -1,24 +1,26 @@
+import clsx from "clsx"
+import { useAtom } from "jotai"
+import { useCallback, useEffect, useState } from "react"
 import { AiFillGithub, AiOutlineHome } from "react-icons/ai"
-import {
-  editModelAtom,
-  taskTypeListAtom,
-  todoListAtom,
-  userInfoAtom
-} from "~utils/store"
-import { useEffect, useState } from "react"
-
 import { BsPlusSquareDotted } from "react-icons/bs"
-import { ETaskStatus } from "~utils/types"
-import EditTodoItem from "./EditTodoItem"
+import { IoCloseOutline, IoRefreshOutline } from "react-icons/io5"
+
+import {
+  getTagColorFunction,
+  onClickStopPropagation,
+  readCacheOrRefetch,
+  writeCache
+} from "~utils"
 import { GITHUB } from "~utils/config"
 import { HOMEPAGE } from "~utils/config"
-import { IoCloseOutline } from "react-icons/io5"
+import { getInitData } from "~utils/services"
+import { editModelAtom, taskTypeListAtom, todoListAtom } from "~utils/store"
+import { ETaskStatus } from "~utils/types"
+
+import EditTodoItem from "./EditTodoItem"
 import Loading from "./Loading"
 import Statistics from "./Statistics"
 import TodoItem from "./TodoItem"
-import { getInitData } from "~utils/services"
-import { onClickStopPropagation } from "~utils"
-import { useAtom } from "jotai"
 
 export default function MainContainer({
   onDisActive
@@ -31,14 +33,17 @@ export default function MainContainer({
   const [offset, setOffset] = useState(2)
   const [status, setStatus] = useState(ETaskStatus.未完成)
   const [editModal, setEditModal] = useAtom(editModelAtom)
+  const getTagColor = useCallback(getTagColorFunction, [])()
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true)
-        const { taskTypeList, todoList } = await getInitData()
+        const { todoList = [], taskTypeList = [] } = await readCacheOrRefetch()
         setTaskType(taskTypeList)
         setTodoList(todoList)
+        console.log(todoList, taskTypeList)
       } catch (error) {
         console.log("fetch data fail:", error)
       } finally {
@@ -62,20 +67,44 @@ export default function MainContainer({
     }
   }
 
+  const onRefreshData = async () => {
+    try {
+      setIsRefreshing(true)
+      const { todoList, taskTypeList } = await getInitData()
+      setTodoList(todoList)
+      setTaskType(taskTypeList)
+      writeCache(taskTypeList, todoList)
+    } catch (error) {
+      console.log("refresh data fail:", error)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
   return (
     <div
       className="w-[80vw] max-w-[922px] min-h-[400px] max-h-[min(860px, 90vh)] bg-white rounded-md custom-shadow relative overflow-hidden"
       onClick={onClickStopPropagation}>
-      <div className="flex items-center justify-between border-b border-gray-100 p-4 group relative">
-        <a href={HOMEPAGE} target="_blank" className="flex gap-2 items-center">
+      <div className="flex items-center border-b border-gray-100 p-4 group relative">
+        <a
+          href={HOMEPAGE}
+          target="_blank"
+          className="flex gap-2 items-center mr-auto">
           <AiOutlineHome className="text-[#cb5647]" />
           待办事项
         </a>
-        <span className="transition-all translate-y-[-48px] group-hover:translate-y-0 absolute right-[50px] text-[20px]">
+        <span className="transition-all translate-y-[-48px] group-hover:translate-y-0 absolute right-[72px] text-[20px]">
           <a href={GITHUB} target="_blank">
             <AiFillGithub />
           </a>
         </span>
+        <IoRefreshOutline
+          className={clsx(
+            { "animate-spin": isRefreshing },
+            "cursor-pointer p-[4px] rounded-full hover:bg-gray-100 transition-all text-[24px]"
+          )}
+          onClick={onRefreshData}
+        />
         <IoCloseOutline
           className="cursor-pointer p-[4px] rounded-full hover:bg-gray-100 transition-all text-[24px]"
           onClick={onDisActive}
@@ -94,6 +123,7 @@ export default function MainContainer({
             )
             .map((item, idx) => (
               <TodoItem
+                getTagColor={getTagColor}
                 key={item.taskId}
                 item={item}
                 styles={{ animationDelay: `${idx * 100}ms` }}

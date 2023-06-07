@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs"
-import { addDays, isBefore } from "date-fns"
+import { addDays, addMinutes, isBefore } from "date-fns"
+import { is } from "date-fns/locale"
 
-import type { ITodoItem } from "./types"
+import { getInitData } from "./services"
+import type { ITaskType, ITodoItem, IUserInfo } from "./types"
 
 export const request = async <T>(
   url: string,
@@ -120,5 +122,85 @@ export const calcTodoCountInWeek = (todoList: ITodoItem[]) => {
   return {
     result,
     exprResult
+  }
+}
+
+// write todo list and all type to localStorage
+export const writeCache = async (
+  taskTypeList: ITaskType[],
+  todoList: ITodoItem[]
+) => {
+  chrome.storage.local.set({
+    taskTypeList,
+    todoList
+  })
+  // set cache expr time to 5 minutes
+  const expr = addMinutes(new Date(), 5).valueOf()
+  chrome.storage.local.set({ expr })
+}
+
+// read localStorage's data cache
+export const readCacheOrRefetch = async () => {
+  const { expr } = (await chrome.storage.local.get("expr")) as { expr: number }
+  const isExpr = expr && expr > Date.now()
+  console.log("isExpr", isExpr, expr)
+  if (isExpr !== true) {
+    // 发起请求读取数据
+    const { taskTypeList, todoList } = await getInitData()
+    writeCache(taskTypeList, todoList)
+    return {
+      taskTypeList,
+      todoList
+    }
+  } else {
+    const { taskTypeList, todoList } = (await chrome.storage.local.get([
+      "taskTypeList",
+      "todoList"
+    ])) as { taskTypeList: ITaskType[]; todoList: ITodoItem[] }
+    return {
+      taskTypeList,
+      todoList
+    }
+  }
+}
+
+// get tag color by tag name
+export const getTagColorFunction = () => {
+  const colorList = [
+    "#6366f1",
+    "#8b5cf6",
+    "#a855f7",
+    "#d946ef",
+    "#ec4899",
+    "#f43f5e",
+    "#10b981",
+    "#14b8a6",
+    "#06b6d4",
+    "#0ea5e9",
+    "#3b82f6",
+    "#64748b",
+    "#6b7280",
+    "#71717a",
+    "#737373",
+    "#57534e",
+    "#ef4444",
+    "#f97316",
+    "#f59e0b",
+    "#eab308",
+    "#84cc16",
+    "#22c55e"
+  ]
+  const colorMap = {}
+  return (tagName: string | number = "-") => {
+    console.log("tagName", tagName, colorMap)
+    if (colorMap[tagName]) {
+      return colorList[tagName] as string
+    } else {
+      const color =
+        colorList.find((c) => !Object.values(colorMap).includes(c)) ??
+        colorList[0]
+      colorMap[tagName] = color
+      return color
+    }
   }
 }

@@ -21,7 +21,7 @@ const handler: PlasmoMessaging.MessageHandler<{
   ])
   return res.send({
     taskTypeList,
-    todoList: todoList.result
+    todoList: todoList.result.sort((prev, next) => Number(next) - Number(prev))
   })
 }
 

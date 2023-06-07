@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import { useAtom } from "jotai"
-import { type CSSProperties, useEffect, useRef, useState } from "react"
+import { type CSSProperties, useCallback, useState } from "react"
 import { AiOutlineEdit } from "react-icons/ai"
 import { BsCalendar2Check } from "react-icons/bs"
 import { CiCircleCheck } from "react-icons/ci"
@@ -15,8 +15,9 @@ import CloseButton from "./CloseButton"
 interface IProps {
   item: ITodoItem
   styles?: CSSProperties
+  getTagColor: (tagId?: number) => string
 }
-export default function TodoItem({ item, styles }: IProps) {
+export default function TodoItem({ item, styles, getTagColor }: IProps) {
   const { taskName, taskContent, taskId, status, expectTime } = item
   const [isLoading, setIsLoading] = useState(false)
   const [, setEditModal] = useAtom(editModelAtom)
@@ -95,6 +96,15 @@ export default function TodoItem({ item, styles }: IProps) {
           })}>
           {taskContent}
         </p>
+      </div>
+      <div
+        className="text-[12px] text-white p-0.5 flex gap-1 flex-wrap items-center justify-center"
+        style={{ opacity: item.typeMessage?.typeId ? 1 : 0 }}>
+        <span
+          style={{ background: getTagColor(item.typeMessage?.typeId) }}
+          className="p-1 rounded-sm inline-block h-max">
+          {item.typeMessage?.typeName}
+        </span>
       </div>
       <div>
         <div className="flex gap-2 items-center">

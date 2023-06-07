@@ -16,45 +16,21 @@ export const getStyle: PlasmoGetStyle = () => {
 }
 
 const CustomButton = () => {
-  const [, setRender] = useState(false)
-  const active = useRef(false)
-  const setActive = (value: boolean) => {
-    if (value === active.current) return
-    active.current = value
-    setRender((i) => !i)
-  }
+  const [active, setActive] = useState(false)
+
   const [hadAuth, setHadAuth] = useState<undefined | boolean>()
   const [, setUserInfo] = useAtom(userInfoAtom)
-  const keyPressRef = useRef({})
-
   useEffect(() => {
-    // init add keydown event
-    const onKeyDown = (e: KeyboardEvent) => {
-      keyPressRef.current = { ...keyPressRef.current, [e.code]: true }
-      // check if press right cmd + dot
-      if (
-        active.current === false &&
-        keyPressRef.current["Period"] &&
-        keyPressRef.current["MetaRight"]
-      ) {
-        setActive(true)
-      }
-      if (e.key === "Escape" && active) {
-        setActive(false)
-      }
-      setTimeout(() => {
-        keyPressRef.current = {}
-      }, 300)
-    }
-    hotkeys("ctrl+j", function (event, handler) {
-      // Prevent the default refresh event under WINDOWS system
+    hotkeys("ctrl+j,command+.,win+.", function (event) {
       event.preventDefault()
+      if (active === true) return
       setActive(true)
     })
-    document.addEventListener("keydown", onKeyDown)
-    return () => {
-      document.removeEventListener("keydown", onKeyDown)
-    }
+    hotkeys("escape", function (event) {
+      event.preventDefault()
+      if (active === false) return
+      setActive(false)
+    })
   }, [])
 
   useEffect(() => {
@@ -82,10 +58,10 @@ const CustomButton = () => {
       }
     })
     // 每次启用，都禁止页面body滚动
-    document.body.style.overflow = active.current === true ? "hidden" : "unset"
-  }, [active.current])
+    document.body.style.overflow = active === true ? "hidden" : "unset"
+  }, [active])
 
-  if (active.current === false || hadAuth === undefined) return null
+  if (active === false || hadAuth === undefined) return null
 
   return (
     <div
