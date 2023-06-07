@@ -21,7 +21,10 @@ const handler: PlasmoMessaging.MessageHandler<{
   ])
   return res.send({
     taskTypeList,
-    todoList: todoList.result.sort((prev, next) => Number(next) - Number(prev))
+    todoList: todoList.result.sort(
+      ({ createTime }, { createTime: _createTime }) =>
+        Number(_createTime) - Number(createTime)
+    )
   })
 }
 
