@@ -1,21 +1,22 @@
+import clsx from "clsx"
+import { useAtom } from "jotai"
+import { uniqBy } from "lodash-es"
+import { useEffect, useState } from "react"
+import { AiOutlineLoading3Quarters } from "react-icons/ai"
+import { BsCalendar2Check } from "react-icons/bs"
+import { IoCloseOutline } from "react-icons/io5"
+
+import { sendToBackground } from "@plasmohq/messaging"
+
 import {
   calcExprIndex,
   calcExprTimeByIndex,
   exprDateOptions,
   onClickStopPropagation
 } from "~utils"
-import { editModelAtom, taskTypeListAtom } from "~utils/store"
 import { onCreateNewTodoItem, onModifyTodoItem } from "~utils/services"
-import { useEffect, useState } from "react"
-
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import { BsCalendar2Check } from "react-icons/bs"
-import { IoCloseOutline } from "react-icons/io5"
-import clsx from "clsx"
-import { sendToBackground } from "@plasmohq/messaging"
+import { editModelAtom, taskTypeListAtom } from "~utils/store"
 import { todoListAtom } from "~utils/store"
-import { uniqBy } from "lodash-es"
-import { useAtom } from "jotai"
 
 interface IProps {
   onClose: () => void
@@ -65,46 +66,48 @@ export default function EditTodoItem({ onClose }: IProps) {
     }
   }
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    try {
-      if (!selectTypeId) {
-        setErrorMsg("请选择一个事项标签吧，方便后续按分类查看")
-        return
-      }
-      if (!form.taskName) {
-        setErrorMsg("输入一个简洁的标题吧")
-        return
-      }
-      // if (!form.taskContent) {
-      //   setErrorMsg("输入事项描述吧，以免后续忘记关键内容")
-      //   return
-      // }
-      setIsCreating(true)
-      // create a new todo item or update a todo item
-      let newTodoItem
-      if (editModal.data) {
-        // update a todo item
-        newTodoItem = await onModifyTodoItem({
-          ...form,
-          typeId: selectTypeId,
-          status: editModal.data.status,
-          expectTime: calcExprTimeByIndex(exprDateIndex),
-          taskId: editModal.data.taskId
-        })
-      } else {
-        newTodoItem = await onCreateNewTodoItem({
-          ...form,
-          typeId: selectTypeId,
-          expectTime: calcExprTimeByIndex(exprDateIndex)
-        })
-      }
-      setTodoList((i) => uniqBy([newTodoItem, ...i], "taskId"))
-    } catch (error) {
-      console.error("create todo item error:", error)
-    } finally {
-      setIsCreating(false)
-    }
+  const onSubmit = async () => {
+    console.log("on submit event")
+    // try {
+    //   if (!selectTypeId) {
+    //     setErrorMsg("请选择一个事项标签吧，方便后续按分类查看")
+    //     return
+    //   }
+    //   if (!form.taskName) {
+    //     setErrorMsg("输入一个简洁的标题吧")
+    //     return
+    //   }
+    //   // if (!form.taskContent) {
+    //   //   setErrorMsg("输入事项描述吧，以免后续忘记关键内容")
+    //   //   return
+    //   // }
+    //   setIsCreating(true)
+    //   // create a new todo item or update a todo item
+    //   let newTodoItem
+    //   if (editModal.data) {
+    //     // update a todo item
+    //     newTodoItem = await onModifyTodoItem({
+    //       ...editModal.data,
+    //       ...form,
+    //       typeId: selectTypeId,
+    //       status: editModal.data.status,
+    //       expectTime: calcExprTimeByIndex(exprDateIndex),
+    //       taskId: editModal.data.taskId
+    //     })
+    //   } else {
+    //     newTodoItem = await onCreateNewTodoItem({
+    //       ...form,
+    //       typeId: selectTypeId,
+    //       expectTime: calcExprTimeByIndex(exprDateIndex)
+    //     })
+    //   }
+    //   setTodoList((i) => uniqBy([...i, newTodoItem], "taskId"))
+    // } catch (error) {
+    //   console.error("create todo item error:", error)
+    // } finally {
+    //   setIsCreating(false)
+    //   onClose()
+    // }
   }
 
   useEffect(() => {
@@ -118,9 +121,7 @@ export default function EditTodoItem({ onClose }: IProps) {
     <div
       className="absolute inset-0 bg-[#2f2f2f20] z-30 flex justify-center items-center"
       onClick={onClickStopPropagation}>
-      <form
-        className="p-4 pl-6 border-2 border-gray-100 w-[600px] m-4 rounded-md  bg-white custom-shadow scale-in"
-        onSubmit={onSubmit}>
+      <form className="p-4 pl-6 border-2 border-gray-100 w-[600px] m-4 rounded-md  bg-white custom-shadow scale-in">
         <div className="flex items-center gap-4 pb-4">
           <input
             type="text"
@@ -156,7 +157,10 @@ export default function EditTodoItem({ onClose }: IProps) {
                       : "text-gray-500 bg-white"
                   }`
                 )}
-                onClick={() => setSelectTypeId(typeId)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSelectTypeId(typeId)
+                }}
                 key={typeId}>
                 {typeName}
               </button>
@@ -225,7 +229,7 @@ export default function EditTodoItem({ onClose }: IProps) {
           </button>
           <button
             className="p-1 px-2 bg-[#d04b22] text-white rounded-sm"
-            type="submit">
+            onClick={onSubmit}>
             {isCreating ? (
               <div className="flex items-center gap-2">
                 <AiOutlineLoading3Quarters className="animate-spin" />

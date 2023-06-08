@@ -1,25 +1,26 @@
+import clsx from "clsx"
+import { useAtom } from "jotai"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { AiFillGithub, AiOutlineHome } from "react-icons/ai"
+import { BsPlusSquareDotted } from "react-icons/bs"
 import { IoCloseOutline, IoRefreshOutline } from "react-icons/io5"
-import { editModelAtom, taskTypeListAtom, todoListAtom } from "~utils/store"
+
 import {
   getTagColorFunction,
   onClickStopPropagation,
   readCacheOrRefetch,
   writeCache
 } from "~utils"
-import { useCallback, useEffect, useState } from "react"
-
-import { BsPlusSquareDotted } from "react-icons/bs"
-import { ETaskStatus } from "~utils/types"
-import EditTodoItem from "./EditTodoItem"
 import { GITHUB } from "~utils/config"
 import { HOMEPAGE } from "~utils/config"
+import { getInitData } from "~utils/services"
+import { editModelAtom, taskTypeListAtom, todoListAtom } from "~utils/store"
+import { ETaskStatus } from "~utils/types"
+
+import EditTodoItem from "./EditTodoItem"
 import Loading from "./Loading"
 import Statistics from "./Statistics"
 import TodoItem from "./TodoItem"
-import clsx from "clsx"
-import { getInitData } from "~utils/services"
-import { useAtom } from "jotai"
 
 export default function MainContainer({
   onDisActive
@@ -34,6 +35,12 @@ export default function MainContainer({
   const [editModal, setEditModal] = useAtom(editModelAtom)
   const getTagColor = useCallback(getTagColorFunction, [])()
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const currentTodoList = useMemo(() => {
+    return todoList.filter(
+      (item) => status === ETaskStatus.全部 || item.status === status
+    )
+  }, [todoList, status])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,18 +123,20 @@ export default function MainContainer({
           className="overflow-scroll pb-[60px] scrollbar transition-all ease-linear"
           style={{ height: "calc(min(860px, 90vh) - 107px)" }}>
           <Statistics />
-          {todoList
-            .filter(
-              (item) => item.status === status || status === ETaskStatus.全部
-            )
-            .map((item, idx) => (
+          {currentTodoList.length > 0 ? (
+            currentTodoList.map((item, idx) => (
               <TodoItem
                 getTagColor={getTagColor}
                 key={item.taskId}
                 item={item}
                 styles={{ animationDelay: `${idx * 100}ms` }}
               />
-            ))}
+            ))
+          ) : (
+            <div className="h-[300px] flex justify-center items-center">
+              <span className="text-gray-300">空空如也...</span>
+            </div>
+          )}
         </div>
       )}
 

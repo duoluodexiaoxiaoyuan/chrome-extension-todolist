@@ -1,7 +1,7 @@
 import chartXkcd from "chart.xkcd"
 import { Pie } from "chart.xkcd-react"
 import clsx from "clsx"
-import { isAfter, isBefore, subDays } from "date-fns"
+import { isAfter, isBefore, startOfDay, subDays } from "date-fns"
 // import statisticSvg from "data-base64:~assets/statistic.svg"
 import { useAtom } from "jotai"
 import { useMemo } from "react"
@@ -18,7 +18,7 @@ export default function Statistics() {
 
   const trendData = useMemo(() => {
     const todayTasks = todoList.filter(
-      (item) => Number(item.createTime) > subDays(new Date(), 1).getTime()
+      (item) => Number(item.createTime) > startOfDay(new Date()).getTime()
     )
     // const yesterdayTasks = todoList.filter((item) => {
     //   // is yesterday's task
