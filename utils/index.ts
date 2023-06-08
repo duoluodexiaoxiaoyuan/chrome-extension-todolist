@@ -1,9 +1,9 @@
-import bcrypt from "bcryptjs"
-import { addDays, addMinutes, isBefore } from "date-fns"
-import { is } from "date-fns/locale"
-
-import { getInitData } from "./services"
 import type { ITaskType, ITodoItem, IUserInfo } from "./types"
+import { addDays, addMinutes, isBefore } from "date-fns"
+
+import bcrypt from "bcryptjs"
+import { getInitData } from "./services"
+import { is } from "date-fns/locale"
 
 export const request = async <T>(
   url: string,
@@ -201,5 +201,22 @@ export const getTagColorFunction = () => {
       colorMap[tagName] = color
       return color
     }
+  }
+}
+
+// save favicon to localStorage and read it
+export const saveFavicon = (origin: string, base64String: string) => {
+  return chrome.storage.local.set({
+    [origin]: base64String
+  })
+}
+
+export const getFavicon = async (origin: string) => {
+  try {
+    const { [origin]: favicon } = await chrome.storage.local.get(origin)
+    return favicon
+  } catch (error) {
+    console.log("get favicon fail", error)
+    return null
   }
 }

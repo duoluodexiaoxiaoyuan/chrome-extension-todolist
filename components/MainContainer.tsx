@@ -1,26 +1,25 @@
-import clsx from "clsx"
-import { useAtom } from "jotai"
-import { useCallback, useEffect, useMemo, useState } from "react"
 import { AiFillGithub, AiOutlineHome } from "react-icons/ai"
-import { BsPlusSquareDotted } from "react-icons/bs"
 import { IoCloseOutline, IoRefreshOutline } from "react-icons/io5"
-
+import { editModelAtom, taskTypeListAtom, todoListAtom } from "~utils/store"
 import {
   getTagColorFunction,
   onClickStopPropagation,
   readCacheOrRefetch,
   writeCache
 } from "~utils"
+import { useCallback, useEffect, useMemo, useState } from "react"
+
+import { BsPlusSquareDotted } from "react-icons/bs"
+import { ETaskStatus } from "~utils/types"
+import EditTodoItem from "./EditTodoItem"
 import { GITHUB } from "~utils/config"
 import { HOMEPAGE } from "~utils/config"
-import { getInitData } from "~utils/services"
-import { editModelAtom, taskTypeListAtom, todoListAtom } from "~utils/store"
-import { ETaskStatus } from "~utils/types"
-
-import EditTodoItem from "./EditTodoItem"
 import Loading from "./Loading"
 import Statistics from "./Statistics"
 import TodoItem from "./TodoItem"
+import clsx from "clsx"
+import { getInitData } from "~utils/services"
+import { useAtom } from "jotai"
 
 export default function MainContainer({
   onDisActive
@@ -49,7 +48,6 @@ export default function MainContainer({
         const { todoList = [], taskTypeList = [] } = await readCacheOrRefetch()
         setTaskType(taskTypeList)
         setTodoList(todoList)
-        console.log(todoList, taskTypeList)
       } catch (error) {
         console.log("fetch data fail:", error)
       } finally {

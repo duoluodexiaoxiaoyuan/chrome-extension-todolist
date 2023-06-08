@@ -5,12 +5,13 @@ const handler: PlasmoMessaging.MessageHandler<{
   type: string
   [k: string]: string
 }> = async (req, res) => {
-  const { typeId, taskName, taskContent } = req.body
+  const { typeId, taskName, taskContent, expectTime } = req.body
   return res.send(
     await createNewTodoItem({
       typeId: Number(typeId),
       taskName,
-      taskContent
+      taskContent,
+      expectTime
     })
   )
 }
