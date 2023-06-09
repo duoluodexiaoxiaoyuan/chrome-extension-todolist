@@ -44,7 +44,7 @@ chrome.storage.local.get("taskTypeList").then((res) => {
       async (res) => {
         const { result } = res[0]
         // save favIconUrl to localStorage
-        const origin = new URL(favIconUrl).origin
+        const origin = new URL(url).origin
         let cache = await getFavicon(origin)
         if (!cache) {
           // fetch favicon base64

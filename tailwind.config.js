@@ -2,12 +2,12 @@
 module.exports = {
   mode: "jit",
   darkMode: "class",
-  content: ["./**/*.tsx"],
+  content: ["./**/*.tsx", "./*.tsx"],
   plugins: [],
   theme: {
     extend: {
       gridTemplateColumns: {
-        todo: "48px, auto, 120px, 200px, 60px"
+        todo: "48px, auto, 120px, 200px, 90px"
       }
     }
   }

@@ -1,11 +1,15 @@
 import clsx from "clsx"
 import { useAtom } from "jotai"
-import { type CSSProperties, useCallback, useState } from "react"
+import { type CSSProperties, useEffect, useState } from "react"
 import { AiOutlineEdit } from "react-icons/ai"
-import { BsCalendar2Check } from "react-icons/bs"
-import { CiCircleCheck } from "react-icons/ci"
+import { BsCalendar2Check, BsCheck2Circle, BsCircle } from "react-icons/bs"
 
-import { calcTodoExprTime, formatTimestamp, isExprTimeExpired } from "~utils"
+import {
+  calcTodoExprTime,
+  formatTimestamp,
+  getFaviconFromTaskName,
+  isExprTimeExpired
+} from "~utils"
 import { onModifyTodoItem, onRemoveTodoItem } from "~utils/services"
 import { editModelAtom, todoListAtom } from "~utils/store"
 import { ETaskStatus, type ITodoItem } from "~utils/types"
@@ -22,6 +26,8 @@ export default function TodoItem({ item, styles, getTagColor }: IProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [, setEditModal] = useAtom(editModelAtom)
   const [, setTodoList] = useAtom(todoListAtom)
+  const [favicon, setFavicon] = useState("")
+
   const onChangeStatus = async () => {
     let newTodoItem
     try {
@@ -68,6 +74,13 @@ export default function TodoItem({ item, styles, getTagColor }: IProps) {
     }
   }
 
+  useEffect(() => {
+    getFaviconFromTaskName(taskName).then((favicon) => {
+      console.log("favicon:", favicon)
+      setFavicon(favicon)
+    })
+  }, [taskName])
+
   return (
     <div
       className={clsx(
@@ -75,17 +88,13 @@ export default function TodoItem({ item, styles, getTagColor }: IProps) {
         "todo-item group hover:border-l-[#cb5647] hover:custom-shadow"
       )}
       style={styles}>
-      <button
-        onClick={onChangeStatus}
-        className={clsx(
-          "text-2xl hover:scale-105 origin-center transition-all",
-          { "text-green-600": status === ETaskStatus.已完成 }
-        )}>
-        <CiCircleCheck />
-      </button>
+      {/* add favicon */}
+      <div className="flex justify-center items-center">
+        {favicon !== "" && <img src={favicon} className="w-[30px] h-[30px]" />}
+      </div>
       <div>
         <h5
-          className={clsx("text-[16px] mb-2", {
+          className={clsx("text-[16px] mb-2 truncate", {
             "line-through": status === ETaskStatus.已完成
           })}>
           {taskName}
@@ -125,11 +134,22 @@ export default function TodoItem({ item, styles, getTagColor }: IProps) {
         </span>
       </div>
       <div className="flex items-center justify-end gap-2 group-hover:opacity-100 opacity-0 ">
+        <button
+          onClick={onChangeStatus}
+          className={clsx({
+            "text-green-600": status === ETaskStatus.已完成
+          })}>
+          {status === ETaskStatus.已完成 ? (
+            <BsCheck2Circle className="transition-all p-[4px] rounded-full hover:bg-gray-100 text-[24px]" />
+          ) : (
+            <BsCircle className="transition-all p-[4px] rounded-full hover:bg-gray-100 text-[24px]" />
+          )}
+        </button>
         <AiOutlineEdit
           onClick={() => {
             setEditModal({ visible: true, data: item })
           }}
-          className="cursor-pointer"
+          className="cursor-pointer p-[4px] rounded-full hover:bg-gray-100 transition-all text-[24px]"
         />
         <CloseButton onClick={onClickRemoveBtn} />
       </div>
